@@ -35,7 +35,7 @@ export default {
             )
             .then((userCredential)=>{
                 console.log("Successfully registered!")
-                this.$router.replace('/cities')
+                this.$router.replace('/signin')
             })
             .catch((error) => {
                 console.log(error.code)

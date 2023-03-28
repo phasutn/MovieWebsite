@@ -27,7 +27,6 @@ export default {
     return {
       movieList: {},
       title: this.$route.params.title
-
     }
   },
   created () {

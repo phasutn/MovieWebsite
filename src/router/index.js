@@ -11,7 +11,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/cities'
+      redirect: '/signin'
     },
 
     {
@@ -27,7 +27,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/info/:title',
+      path: '/info/:movieid',
       name: 'Info',
       component: Info,
       meta: {
