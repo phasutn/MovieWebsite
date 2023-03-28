@@ -1,18 +1,24 @@
 <template>
-    <div class="row">
-        <h2>SignUp</h2>
-        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 col-md-offset-3"/>
-        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-offset-3">
-
-            <input type="email" class="form-control" placeholder="email" v-model="formData.email">
-            <br>
-            <input type="password" class="form-control" placeholder="password" v-model="formData.password">
-            <br>
-            <button class="btn btn-success" @click="signUp">SignUp</button>
-        </div>
+  <main>
+    <div class="LogOutContainer">
+      <div class="loginPanel">
+        <h1>REGISTER</h1><br/>
+          <div class="info">
+            <p class="infoText">USERNAME</p>
+            <input type="text" placeholder="Username" v-model="formData.email"/>
+            <div id="username_empty" >Invalid Username</div>
+            <div id="username_exists" >Username already exists</div>
+            <p class="infoText">PASSWORD</p>
+            <input type="password" placeholder="Password" v-model="formData.password"/>
+            <div id="password_empty" >Invalid Password</div>
+          </div><br/>
+        <button type="submit" @click="signUp">REGISTER</button>
+      </div>
     </div>
+  </main>
 </template>
 <script>
+
 import {getAuth, createUserWithEmailAndPassword} from 'firebase/auth'
 
 export default {
@@ -27,6 +33,33 @@ export default {
   },
   methods: {
     signUp () {
+        let user_empty = document.getElementById('username_empty')
+        let pass_empty = document.getElementById('password_empty')
+        let user_exists = document.getElementById('username_exists')
+        let email = this.formData.email;
+        let password = this.formData.password;
+
+        //No username or password input
+        if(email.length == 0){
+          user_empty.style.display = "block";
+          user_exists.style.display = "none"
+        } else {
+          user_empty.style.display = "none"
+        }
+
+        if(password.length == 0){
+          pass_empty.style.display = "block";
+          user_exists.style.display = "none"
+        } else {
+          pass_empty.style.display = "none"
+        }
+
+        
+        if (user_empty.style.display == "block" || pass_empty.style.display == "block") {
+          return;
+        }
+
+        if(email.length != 0 & password.length != 0){
         const auth = getAuth()
             createUserWithEmailAndPassword(
                 auth,
@@ -39,8 +72,11 @@ export default {
             })
             .catch((error) => {
                 console.log(error.code)
-                alert(error.message)
+                pass_empty.style.display = "none"
+                user_empty.style.display = "none"
+                user_exists.style.display = "block"
             })
+          }
     }
   }
 }
@@ -48,18 +84,37 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1,
-h2 {
-  font-weight: normal;
+
+.LogOutContainer{
+  margin: 50px auto;
+  max-width: 400px;
+  display: flex;
+  font-family: "Tilt Warp";
+  color: black;
+  background-color: aliceblue;
+  border-radius: 16px 16px 16px 16px;
+  padding: 70px;
+  white-space: nowrap;
+  overflow:hidden
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+
+#username_exists{
+  margin-left: 2px;
+  opacity: 60%;
+  text-align: left;
+  font-size: 85%;
+  color:red;
+  display: none;
 }
-li {
-  margin: 0 10px;
+
+#username_empty,
+#password_empty{
+  margin-left: 3px;
+  opacity: 60%;
+  font-size: 80%;
+  text-align: left;
+  color: red;
+  display: none;
 }
-a {
-  color: #42b983;
-}
+
 </style>

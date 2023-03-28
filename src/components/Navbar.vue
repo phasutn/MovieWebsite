@@ -4,11 +4,7 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <router-link to="/contactlist" class="nav-link" style="color: white;">CONTACTLIST</router-link>
-          </li>
-
-          <li class="nav-item">
-            <router-link to="/contactadd" class="nav-link" style="color: white;">ADD</router-link>
+            <router-link to="/contactlist" class="nav-link" style="color: white;">MOVIE</router-link>
           </li>
 
           <li class="nav-item">

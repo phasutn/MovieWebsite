@@ -9,7 +9,7 @@
       <div class="row">
         <div class="col-12 d-flex flex-wrap">
           <div class="col-lg-2 col-md-3 col-sm-4 col-5 mb-4" v-for="(movie, key) in movieList" :key="key">
-            <router-link :to = "{path: 'info', name: 'Info', params: {movieID: movieList[key].id}}">
+            <router-link :to = "{path: 'info', name: 'Info', params: {movieid: movieList[key].id}}">
               <div class="card">
                 <img :src="getPoster(key)" class="card-img-top" id="PosterImg">
                 <div class="card-body movie-title">
