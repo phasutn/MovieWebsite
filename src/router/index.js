@@ -19,7 +19,7 @@ const router = createRouter({
       redirect: '/signin'
     },
     {
-      path: '/movies',
+      path: '/movielist',
       name: 'MovieList',
       component: MovieList,
       meta: {

@@ -68,7 +68,7 @@ export default {
           )
           .then((userCredential)=>{
               console.log("Successfully sign in!")
-              this.$router.replace('/cities')
+              this.$router.replace('/movielist')
           })
           .catch((error) => {
               console.log(error.code)

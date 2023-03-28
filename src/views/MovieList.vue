@@ -1,100 +1,101 @@
+// src/components/Info.vue
 <template>
-  <main>
-    <div id="contactlist">
-      <div>
-        <h1 style="text-align:center">CONTACT LIST<br></h1>
-        <div class="list">
-          <input type="text" placeholder="Search name" v-model="search">
-          <table>
-            <tbody>
-              <tr v-for="(acontact, index) in filterContacts" :key="acontact.id">
-                <div class="contactBox">
-                  <div class="contactBoxContent">
-                    <img :src="acontact.imageUrl" class="imageHolder">
-                    <div style="margin: auto">
-                      <div>{{acontact.firstname}} {{acontact.lastname}}</div>
-                      <div>Title: {{acontact.mobileNo}}</div>
-                      <div>Email: {{acontact.email}}</div>
-                      <div>Facebook: {{acontact.facebook}}</div>
-                      <div style="display: flex; justify-content: center">
-                        <router-link :to="{path:'/contactupdate' , name: 'contactupdate', params: {contactId: acontact._id}}">
-                        <button type="button" class="btn btn-warning">UPDATE</button>
-                        </router-link >
-                        <button @click="deleteContact(acontact._id)" class="btn btn-danger">DELETE</button>
-                      </div>
-                    </div>
-                  </div>
-                  <td v-if="index % 2 === 0"></td>
-                </div>
-              </tr>
-            </tbody>
-          </table>
+  <input type="text" placeholder="Search name" v-model="search">
+  <div class="Info">
+    <div class>
+      <div class="row">
+        <div class="col-12 d-flex flex-wrap">
+          <div class="col-lg-2 col-md-3 col-sm-4 col-5 mb-4" v-for="(movie, key) in movieList" :key="key">
+            <div class="card">
+              <img :src="getPoster(key)" class="card-img-top" id="PosterImg">
+              <div class="card-body movie-title">
+                <h5 class="card-title">{{movie.title}}</h5>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </main>
+  </div>
 </template>
 
-  
 <script>
-import {collection, onSnapshot, getFirestore} from 'firebase/firestore'
-import {getAuth, signOut} from 'firebase/auth'
-import { assert } from '@vue/compiler-core'
-  export default {
-    name: 'CityList',
-    data () {
-      return {
-        msg: 'EGCI427 Practice',
-        city: null,
-        cities: {},
-        cityIds:{},
-        editName: [],
-        auth: getAuth()
+import axios from 'axios'
+export default {
+  name: 'Weather',
+  data () {
+    return {
+      movieList: {},
+      title: this.$route.params.title
+
+    }
+  },
+  created () {
+    let apikey = 'e4812b0763e5a2d97cbb969c192759a7'
+    let infoUrl = 'https://api.themoviedb.org/3/search/movie?api_key=' + apikey + '&query=' + this.title;
+    axios.get(infoUrl)
+    .then((response) => {
+      this.movieList = response.data.results;
+      console.log(this.movieList);
+    })
+    .catch((error)=>{
+      console.log(error)
+    })
+  },
+  methods: {
+    getPoster (key){
+      if(this.movieList[key].poster_path != null){
+        return 'https://image.tmdb.org/t/p/original' + this.movieList[key].poster_path
       }
-    },
-    mounted () {
-      console.log('City List')
-      const db = getFirestore()
-      const colRef = collection(db, "cities")
-      onSnapshot(colRef, snapShot => {
-        this.cities = snapShot.docs.map(doc => doc.data())
-        this.cityIds = snapShot.docs.map(doc => doc.id)
-      })
-    },
-    methods: {
-      logout () {
-        console.log('logout')
-        signOut(this.auth)
-      .then(()=>{
-        this.$router.replace('/signin')
-      })
-      .catch((error) => {
-        alert(error.message)
-      })
-      }
+      else return 'https://via.placeholder.com/500x750?text=Poster+Not+Available'
     }
   }
-  </script>
-  
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+}
+</script>
 <style scoped>
-h1, h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  /* display: inline-block; */
-  margin: 0 10px;
-}
-a {
-  color: #ffffff;
-}
-p.citydetail{
-  text-align: justify;
+.Info {
+  color: black;
+  font-family: "Tilt Warp";
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
 }
 
+.card {
+  position: relative;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.card:hover {
+  z-index: 1;
+  transform: scale(1.3);
+  transition: transform 0.3s ease-in-out;
+  
+}
+
+.card .movie-title {
+  font-size: 200px;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  display: none;
+  border-style: solid;
+  border-color: transparent grey grey grey;
+  border-radius: 0px 0px 16px 16px;
+  background: #5c889e;
+}
+
+.card:hover .movie-title{
+  display: block;
+}
+
+
+.Info img {
+  width: 100%;
+  height: 100%; 
+  object-fit: cover;
+}
 
 </style>
