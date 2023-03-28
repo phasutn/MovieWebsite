@@ -8,20 +8,27 @@
         <div class="movie-rating">Rating: {{ movieInfo.rating }}/100</div>
         <p class="movie-description" style="font-size: 20px">{{ movieInfo.overview }}</p>
         <hr />
-        <h2 class="review-title">Comments:</h2>
+        <h2 class="review-title">Reviews:</h2>
         <div class="review-form">
-          <form @submit.prevent="">
-            <textarea v-model="commentText" placeholder="Add your review"></textarea>
+        <form @submit.prevent="setReview">
+            <textarea v-model="review" placeholder="Add your review"></textarea>
             <button type="submit">Submit</button>
         </form>
       </div>
-      <div class="review-list" > 
+      <div class="review-list">
         <ul style="margin: 0; padding: 0;">
           <li style="list-style:none">
-          <!-- <li v-for="comment in comments" :key="comment.id"> -->
             <div class="review-section">
-              <div class="reviewer-name">User 1</div>
-              <div class="review-content">so bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lolso bad lol</div>
+              <div class="reviewer-name">USER - {{curUserReview.userId}}</div>
+              <div class="review-content">{{curUserReview.review}}</div>
+            </div>
+          </li>
+        </ul> 
+        <ul style="margin: 0; padding: 0;">
+          <li style="list-style:none" v-for="(review, key) in reviews" :key="key">
+            <div class="review-section">
+              <div class="reviewer-name">USER - {{review.userId}}</div>
+              <div class="review-content">{{review.review}}</div>
             </div>
           </li>
         </ul>
@@ -84,21 +91,21 @@ import axios from 'axios'
         const docRef = doc(db, "movies", this.movieId);
         const subColRef = collection(docRef, "reviews");
         const subDocRef = doc(subColRef, this.curUserId);
-        const dataObj = {review: this.review};
+        const dataObj = {review: this.review, userId: this.curUserId};
         await setDoc(subDocRef, dataObj);
       },
-        async deleteReview(){
-        const db = getFirestore()
-        const docRef = doc(db, "movies", this.movieId);
-        const subColRef = collection(docRef, "reviews");
-        const subDocRef = doc(subColRef, this.curUserId);
-        await deleteDoc(subDocRef)
+      async deleteReview(){
+      const db = getFirestore()
+      const docRef = doc(db, "movies", this.movieId);
+      const subColRef = collection(docRef, "reviews");
+      const subDocRef = doc(subColRef, this.curUserId);
+      await deleteDoc(subDocRef)
       },
-    getPoster (){
-    if(this.movieInfo.poster_path != null){
-      return 'https://image.tmdb.org/t/p/original' + this.movieInfo.poster_path;
-    }
-    else return 'https://via.placeholder.com/500x750?text=Poster+Not+Available'
+      getPoster (){
+      if(this.movieInfo.poster_path != null){
+        return 'https://image.tmdb.org/t/p/original' + this.movieInfo.poster_path;
+      }
+      else return 'https://via.placeholder.com/500x750?text=Poster+Not+Available'
       }   
     }
   }
