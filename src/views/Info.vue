@@ -19,7 +19,7 @@
         <ul style="margin: 0; padding: 0;" id="personal-review">
           <li style="list-style:none">
             <div class="review-section">
-              <div class="reviewer-name">User - {{curUserId}}</div>
+              <div class="reviewer-name">USER - {{curUserId}}</div>
               <div class="review-content">{{curUserReview.review}}</div>
               <button id="review-delete" type="submit" @click="deleteReview">
               <div>Delete</div>
