@@ -30,10 +30,8 @@ export default {
   name: 'SignIn',
   data () {
     return {
-      formData: {
-        email: '',
-        password: ''
-      }
+      movieInfo: {},
+      title: this.$route.params.title
     }
   },
   methods: {
