@@ -7,12 +7,17 @@
         <h3>{{ movieInfo.release_date }}</h3>
         <p>{{ movieInfo.overview }}</p>
         <input type="text" v-model='review'>
-        <button @click="addReview">Add</button>
+        <button @click="setReview">Save</button>
+        <button @click="deleteReview">Delete</button>
+        <div>
+          Your review: {{curUserReview.review}}
           <div v-for="(review, key) in reviews" :key ='key' >
+            Other people review:
             <div>
               {{review.review}}
             </div>
           </div>
+        </div>
       </div>
     </div>
   </div>
@@ -21,21 +26,24 @@
   
 <script>
 import {collection, onSnapshot, doc, getFirestore, addDoc, setDoc, updateDoc, deleteDoc} from 'firebase/firestore'
+import {getAuth} from 'firebase/auth'
 //import { assert } from '@vue/compiler-core'
 import axios from 'axios'
   export default {
     name: 'CityList',
     data () {
       return {
+        apikey: 'e4812b0763e5a2d97cbb969c192759a7',
         movieInfo: {},
         movieId: this.$route.params.movieid,
         reviews: {},
-        review: ''
+        review: '',
+        curUserReview: {},
+        curUserId: getAuth().currentUser.uid
       }
     },
     created() {
-      let apikey = 'e4812b0763e5a2d97cbb969c192759a7'
-      let infoUrl = 'https://api.themoviedb.org/3/movie/' + this.movieId + '?api_key=' + apikey;
+      let infoUrl = 'https://api.themoviedb.org/3/movie/' + this.movieId + '?api_key=' + this.apikey;
       axios.get(infoUrl)
       .then((response) => {
         this.movieInfo = response.data;
@@ -52,21 +60,32 @@ import axios from 'axios'
       const docRef = doc(colRef, this.movieId);
       const subColRef = collection(docRef, "reviews");
       onSnapshot(subColRef, snapShot => {
-      this.reviews = snapShot.docs.map(doc => doc.data());
-        //this.cityIds = snapShot.docs.map(doc => doc.id)
+        this.reviews = snapShot.docs
+          .filter(doc => doc.id !== this.curUserId)
+          .map(doc => doc.data());
+        const userReview = snapShot.docs
+          .filter(doc => doc.id === this.curUserId)
+          .map(doc => doc.data())
+          .shift();
+        this.curUserReview = userReview || {};
       });
     },
     methods: {
-      async addReview() {
+      async setReview() {
         const db = getFirestore()
-        //const colRef = doc(collection(db,"reviews"))
         const docRef = doc(db, "movies", this.movieId);
         const subColRef = collection(docRef, "reviews");
-        const subDocRef = doc(subColRef);
-        //const subDocRef = doc(subColRef, this.movieId);
+        const subDocRef = doc(subColRef, this.curUserId);
         const dataObj = {review: this.review};
         await setDoc(subDocRef, dataObj);
       },
+        async deleteReview(){
+        const db = getFirestore()
+        const docRef = doc(db, "movies", this.movieId);
+        const subColRef = collection(docRef, "reviews");
+        const subDocRef = doc(subColRef, this.curUserId);
+        await deleteDoc(subDocRef)
+      }
     }
   }
   </script>
