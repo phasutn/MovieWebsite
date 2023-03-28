@@ -6,6 +6,13 @@
         <h2>{{ movieInfo.original_title }}</h2>
         <h3>{{ movieInfo.release_date }}</h3>
         <p>{{ movieInfo.overview }}</p>
+        <input type="text" v-model='review'>
+        <button @click="addReview">Add</button>
+          <div v-for="(review, key) in reviews" :key ='key' >
+            <div>
+              {{review.review}}
+            </div>
+          </div>
       </div>
     </div>
   </div>
@@ -13,7 +20,7 @@
 
   
 <script>
-import {collection, onSnapshot, getFirestore} from 'firebase/firestore'
+import {collection, onSnapshot, doc, getFirestore, addDoc, setDoc, updateDoc, deleteDoc} from 'firebase/firestore'
 //import { assert } from '@vue/compiler-core'
 import axios from 'axios'
   export default {
@@ -21,7 +28,9 @@ import axios from 'axios'
     data () {
       return {
         movieInfo: {},
-        movieId: this.$route.params.movieid
+        movieId: this.$route.params.movieid,
+        reviews: {},
+        review: ''
       }
     },
     created() {
@@ -37,25 +46,27 @@ import axios from 'axios'
       })
     },
     mounted () {
-      // console.log('City List')
-      // const db = getFirestore()
-      // const colRef = collection(db, "cities")
-      // onSnapshot(colRef, snapShot => {
-      //   this.cities = snapShot.docs.map(doc => doc.data())
-      //   this.cityIds = snapShot.docs.map(doc => doc.id)
-      // })
+      console.log('Review List');
+      const db = getFirestore();
+      const colRef = collection(db, "movies");
+      const docRef = doc(colRef, this.movieId);
+      const subColRef = collection(docRef, "reviews");
+      onSnapshot(subColRef, snapShot => {
+      this.reviews = snapShot.docs.map(doc => doc.data());
+        //this.cityIds = snapShot.docs.map(doc => doc.id)
+      });
     },
     methods: {
-      // logout () {
-      //   console.log('logout')
-      //   signOut(this.auth)
-      // .then(()=>{
-      //   this.$router.replace('/signin')
-      // })
-      // .catch((error) => {
-      //   alert(error.message)
-      // })
-      // }
+      async addReview() {
+        const db = getFirestore()
+        //const colRef = doc(collection(db,"reviews"))
+        const docRef = doc(db, "movies", this.movieId);
+        const subColRef = collection(docRef, "reviews");
+        const subDocRef = doc(subColRef);
+        //const subDocRef = doc(subColRef, this.movieId);
+        const dataObj = {review: this.review};
+        await setDoc(subDocRef, dataObj);
+      },
     }
   }
   </script>
