@@ -9,14 +9,14 @@
       <div class="row">
         <div class="col-12 d-flex flex-wrap">
           <div class="col-lg-2 col-md-3 col-sm-4 col-5 mb-4" v-for="(movie, key) in movieList" :key="key">
-            <a href="">
+            <router-link :to = "{path: 'info', name: 'Info', params: {movieID: movieList[key].id}}">
               <div class="card">
                 <img :src="getPoster(key)" class="card-img-top" id="PosterImg">
                 <div class="card-body movie-title">
                   <h5 class="card-title">{{movie.title}}</h5>
                 </div>
               </div>
-            </a>
+            </router-link>
           </div>
         </div>
       </div>
@@ -32,7 +32,6 @@ export default {
     return {
       movieList: {},
       search: '',
-      title: 'titanic',
       apiKey: 'e4812b0763e5a2d97cbb969c192759a7'
     }
   },
