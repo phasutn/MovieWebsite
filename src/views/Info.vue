@@ -42,8 +42,6 @@
     </div>
   </div>
 </template>
-
-
 <script>
 import {collection, onSnapshot, doc, getFirestore, addDoc, setDoc, updateDoc, deleteDoc} from 'firebase/firestore'
 import {getAuth} from 'firebase/auth'
@@ -66,6 +64,20 @@ import axios from 'axios'
       }
     },
     created() {
+      let infoUrl = 'https://api.themoviedb.org/3/movie/' + this.movieId + '?api_key=' + this.apikey;
+      axios.get(infoUrl)
+      .then((response) => {
+        this.movieInfo = response.data;
+        console.log(this.movieInfo);
+      })
+      .catch((error)=>{
+        console.log(error)
+      })
+    },
+    mounted () {
+      console.log('Review List');
+      const db = getFirestore();
+      const colRef = collection(db, "movies");
       const docRef = doc(colRef, this.movieId);
       const subColRef = collection(docRef, "reviews");
       onSnapshot(subColRef, snapShot => {
@@ -89,7 +101,6 @@ import axios from 'axios'
         }
         let slider = document.getElementById("scoreSlider"); //Slider for the score
         this.curUserScore = slider.value;
-
         const db = getFirestore()
         const docRef = doc(db, "movies", this.movieId);
         const subColRef = collection(docRef, "reviews");
@@ -98,11 +109,11 @@ import axios from 'axios'
         await setDoc(subDocRef, dataObj);
       },
       async deleteReview(){
-        const db = getFirestore()
-        const docRef = doc(db, "movies", this.movieId);
-        const subColRef = collection(docRef, "reviews");
-        const subDocRef = doc(subColRef, this.curUserId);
-        await deleteDoc(subDocRef)
+      const db = getFirestore()
+      const docRef = doc(db, "movies", this.movieId);
+      const subColRef = collection(docRef, "reviews");
+      const subDocRef = doc(subColRef, this.curUserId);
+      await deleteDoc(subDocRef)
       },
       getPoster (){
       if(this.movieInfo.poster_path != null){
@@ -117,7 +128,6 @@ import axios from 'axios'
           i++
         });
         let average = total/i;
-        
         const db = getFirestore()
         const docRef = doc(db, "movies", this.movieId);
         const dataObj = {averageScore: average};
@@ -135,25 +145,20 @@ import axios from 'axios'
     flex-direction: row;
     margin: 20px;
   }
-
   .movie-container {
     display: flex;
     margin-bottom: 20px;
   }
-
   .movie-poster{
     margin-right: 20px;
   }
-
   .movie-rating {
     font-size: 25px;
     margin-bottom: 10px;
   }
-
   .review-form {
     margin-bottom: 20px;
   }
-
   .review-form textarea {
     width: 100%;
     height: 100px;
@@ -161,7 +166,6 @@ import axios from 'axios'
     padding: 10px;
     margin-bottom: 10px;
   }
-
   button {
     font-size: 15px;
     border-width: 5px;
@@ -171,21 +175,16 @@ import axios from 'axios'
   .review-section{
     margin-bottom: 30px;
   }
-
   .reviewer-name{
     text-decoration: underline;
     font-size: 25px;
   }
-
   .review-content{
     max-width: 70%;
     margin-bottom: 10px;
     font-size: 15px;
   }
-
   #personal-review{
     display: none;
   }
-
-
 </style>
