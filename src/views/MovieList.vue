@@ -1,17 +1,22 @@
 // src/components/Info.vue
 <template>
-  <input type="text" placeholder="Search name" v-model="search">
+  <div style="margin: 50px; text-align: center; color: white"><h1>Movie</h1></div>
+  <div class="searchBox">
+  <input type="text" placeholder="Search Movie Name" v-model="search"> 
+  </div>
   <div class="Info">
     <div class>
       <div class="row">
         <div class="col-12 d-flex flex-wrap">
           <div class="col-lg-2 col-md-3 col-sm-4 col-5 mb-4" v-for="(movie, key) in movieList" :key="key">
-            <div class="card">
-              <img :src="getPoster(key)" class="card-img-top" id="PosterImg">
-              <div class="card-body movie-title">
-                <h5 class="card-title">{{movie.title}}</h5>
+            <a href="">
+              <div class="card">
+                <img :src="getPoster(key)" class="card-img-top" id="PosterImg">
+                <div class="card-body movie-title">
+                  <h5 class="card-title">{{movie.title}}</h5>
+                </div>
               </div>
-            </div>
+            </a>
           </div>
         </div>
       </div>
@@ -26,23 +31,34 @@ export default {
   data () {
     return {
       movieList: {},
-      title: this.$route.params.title
-
+      search: '',
+      title: 'titanic',
+      apiKey: 'e4812b0763e5a2d97cbb969c192759a7'
     }
   },
   created () {
-    let apikey = 'e4812b0763e5a2d97cbb969c192759a7'
-    let infoUrl = 'https://api.themoviedb.org/3/search/movie?api_key=' + apikey + '&query=' + this.title;
-    axios.get(infoUrl)
-    .then((response) => {
-      this.movieList = response.data.results;
-      console.log(this.movieList);
-    })
-    .catch((error)=>{
-      console.log(error)
-    })
+    this.fetchMovies(this.search);
   },
+
+  watch: {
+    search: function (newValue, oldValue) {
+      this.fetchMovies(newValue);
+    },
+  },
+  
   methods: {
+    fetchMovies(searchInput){
+      if(searchInput == '') searchInput = 'A';
+      let infoUrl = 'https://api.themoviedb.org/3/search/movie?api_key=' + this.apiKey + '&query=' + searchInput;
+      axios.get(infoUrl)
+      .then((response) => {
+        this.movieList = response.data.results;
+        console.log(this.movieList);
+      })
+      .catch((error)=>{
+        console.log(error)
+      })
+    },
     getPoster (key){
       if(this.movieList[key].poster_path != null){
         return 'https://image.tmdb.org/t/p/original' + this.movieList[key].poster_path
@@ -53,6 +69,13 @@ export default {
 }
 </script>
 <style scoped>
+
+.searchBox {
+  max-width: 50%;
+  margin: auto;
+  margin-bottom: 50px;
+}
+
 .Info {
   color: black;
   font-family: "Tilt Warp";
@@ -62,9 +85,9 @@ export default {
 }
 
 .card {
+  box-sizing: border-box;
   position: relative;
-  margin-right: 10px;
-  margin-bottom: 10px;
+  margin: 0px 20px 20px 0px;
 }
 
 .card:hover {
@@ -84,7 +107,8 @@ export default {
   border-style: solid;
   border-color: transparent grey grey grey;
   border-radius: 0px 0px 16px 16px;
-  background: #5c889e;
+  color: black;
+  background: white;
 }
 
 .card:hover .movie-title{
@@ -97,5 +121,7 @@ export default {
   height: 100%; 
   object-fit: cover;
 }
+
+
 
 </style>
