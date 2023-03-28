@@ -49,7 +49,7 @@ button[type='submit']{
 }
 
 button[type='submit']:active{
-  background: none;
+  background: white;
   color: black;
   font-family: "Tilt Warp";
   width: 100px;

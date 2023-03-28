@@ -1,26 +1,22 @@
 <template>
-  <div class="container">
-    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #111; display: flex;">
+  <div>
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: black; display: flex;">
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <router-link to="/contactlist" class="nav-link" style="color: white;">CONTACTLIST</router-link>
+            <router-link to="/movielist" class="nav-link" style="color: white;">MOVIE</router-link>
           </li>
 
           <li class="nav-item">
-            <router-link to="/contactadd" class="nav-link" style="color: white;">ADD</router-link>
+            <router-link to="/signup" class="nav-link" style="color: white;">REGISTER</router-link>
           </li>
 
           <li class="nav-item">
-            <router-link to="/register" class="nav-link" style="color: white;">REGISTER</router-link>
+            <router-link to="/signin" class="nav-link" style="color: white;">LOGIN</router-link>
           </li>
-          
-          <li class="nav-item">
-            <router-link to="/login" class="nav-link" style="color: white;">LOGIN</router-link>
-          </li>   
 
           <li class="nav-item">
-            <router-link to="/logout" class="nav-link" style="color: white;">LOGOUT</router-link>
+            <router-link to="/signout" class="nav-link" style="color: white;">LOGOUT</router-link>
           </li>
         </ul>
       </div>
@@ -28,12 +24,9 @@
   </div>
 </template>
 
-
-
-    
 <script>
-import Register from '@/views/Register.vue'
-import Login from '@/views/Login.vue'
+import Register from '@/views/SignUp.vue'
+import Login from '@/views/SignIn.vue'
 
 export default {
   components: {
@@ -45,21 +38,21 @@ export default {
       this.$router.push('/')
     },
     goToSignUp() {
-      this.$router.push('/register')
+      this.$router.push('/signup')
     },
     goToSignIn() {
-      this.$router.push('/login')
+      this.$router.push('/signin')
     }
   }
 }
 </script>
 
 <style>
-.navbar{
+.navbar {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
+  width: 100%;
 }
 
 nav{
@@ -69,5 +62,9 @@ nav{
   z-index: 1;
 }
 
-
+/* Make sure the parent container has no margin or padding */
+body {
+  margin: 0;
+  padding: 0;
+}
 </style>
