@@ -25,13 +25,15 @@
 </template>
 
 <script>
-import Register from '@/views/SignUp.vue'
-import Login from '@/views/SignIn.vue'
+import SignUp from '@/views/SignUp.vue'
+import SignIn from '@/views/SignIn.vue'
+import SignOut from '@/views/SignIn.vue'
 
 export default {
   components: {
-    Register,
-    Login
+    SignUp,
+    SignIn,
+    SignOut,
   },
   methods: {
     goToHome() {

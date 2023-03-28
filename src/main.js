@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './assets/main.css'
 
 const firebaseConfig = {
+    
  
 };
 let app = initializeApp(firebaseConfig)

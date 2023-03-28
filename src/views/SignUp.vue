@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div class="LogOutContainer">
+    <div class="container">
       <div class="loginPanel">
         <h1>REGISTER</h1><br/>
           <div class="info">
@@ -85,18 +85,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
-.LogOutContainer{
-  margin: 50px auto;
-  max-width: 400px;
-  display: flex;
-  font-family: "Tilt Warp";
-  color: black;
-  background-color: aliceblue;
-  border-radius: 16px 16px 16px 16px;
-  padding: 70px;
-  white-space: nowrap;
-  overflow:hidden
-}
 
 #username_exists{
   margin-left: 2px;

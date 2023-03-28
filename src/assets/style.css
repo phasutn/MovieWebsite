@@ -20,6 +20,8 @@ p.infoText{
 }
 
 .container{
+  margin: 50px auto;
+  max-width: 400px;
   display: flex;
   font-family: "Tilt Warp";
   color: black;
