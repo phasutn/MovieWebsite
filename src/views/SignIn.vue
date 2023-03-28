@@ -3,8 +3,7 @@
 
 
 <template>
-  <main>
-    <div class="container">
+    <div class="LogInContainer">
       <div class="loginPanel">
         <h1>SIGN IN</h1><br/>
           <div class="info">
@@ -20,7 +19,6 @@
         <button type="submit" @click="signIn">SIGN IN</button>
       </div>
     </div>
-  </main>
 </template>
 
 <script>
@@ -30,8 +28,10 @@ export default {
   name: 'SignIn',
   data () {
     return {
-      movieInfo: {},
-      title: this.$route.params.title
+      formData: {
+        email: '',
+        password: ''
+      }
     }
   },
   methods: {
@@ -82,6 +82,20 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+.LogInContainer{
+  margin: 50px auto;
+  max-width: 400px;
+  display: flex;
+  font-family: "Tilt Warp";
+  color: black;
+  background-color: aliceblue;
+  border-radius: 16px 16px 16px 16px;
+  padding: 70px;
+  white-space: nowrap;
+  overflow:hidden
+}
+
 ::placeholder{
   opacity: 50%;
 }
