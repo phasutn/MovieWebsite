@@ -66,20 +66,6 @@ import axios from 'axios'
       }
     },
     created() {
-      let infoUrl = 'https://api.themoviedb.org/3/movie/' + this.movieId + '?api_key=' + this.apikey;
-      axios.get(infoUrl)
-      .then((response) => {
-        this.movieInfo = response.data;
-        console.log(this.movieInfo);
-      })
-      .catch((error)=>{
-        console.log(error)
-      })
-    },
-    mounted () {
-      console.log('Review List');
-      const db = getFirestore();
-      const colRef = collection(db, "movies");
       const docRef = doc(colRef, this.movieId);
       const subColRef = collection(docRef, "reviews");
       onSnapshot(subColRef, snapShot => {
@@ -90,7 +76,9 @@ import axios from 'axios'
           .filter(doc => doc.id === this.curUserId)
           .map(doc => doc.data())
           .shift();
-        this.curUserReview = userReview || {};
+        this.curUserReview = userReview || {}; //Prevent error if current user has no review
+        // Update average score
+        this.setAverageScore(snapShot.docs.map(doc => doc.data()))
       });
     },
     methods: {
@@ -106,22 +94,36 @@ import axios from 'axios'
         const docRef = doc(db, "movies", this.movieId);
         const subColRef = collection(docRef, "reviews");
         const subDocRef = doc(subColRef, this.curUserId);
-        const dataObj = {review: this.review, userId: this.curUserId};
+        const dataObj = {review: this.review, userId: this.curUserId, userScore: this.curUserScore};
         await setDoc(subDocRef, dataObj);
       },
       async deleteReview(){
-      const db = getFirestore()
-      const docRef = doc(db, "movies", this.movieId);
-      const subColRef = collection(docRef, "reviews");
-      const subDocRef = doc(subColRef, this.curUserId);
-      await deleteDoc(subDocRef)
+        const db = getFirestore()
+        const docRef = doc(db, "movies", this.movieId);
+        const subColRef = collection(docRef, "reviews");
+        const subDocRef = doc(subColRef, this.curUserId);
+        await deleteDoc(subDocRef)
       },
       getPoster (){
       if(this.movieInfo.poster_path != null){
         return 'https://image.tmdb.org/t/p/original' + this.movieInfo.poster_path;
       }
       else return 'https://via.placeholder.com/500x750?text=Poster+Not+Available'
-      }   
+      },
+      async setAverageScore(userData){
+        let total = 0, i = 0;
+        userData.forEach(user => {
+          total += user.userScore;
+          i++
+        });
+        let average = total/i;
+        
+        const db = getFirestore()
+        const docRef = doc(db, "movies", this.movieId);
+        const dataObj = {averageScore: average};
+        await setDoc(docRef, dataObj); //Update average score to firebase
+        this.averageScore = average; //Update acerage score in this page
+      }
     }
   }
 </script>
