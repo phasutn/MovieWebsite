@@ -5,7 +5,7 @@
       </div>
       <div class="movie-info">
         <h1 class="movie-title">{{ movieInfo.title }}</h1>
-        <div class="movie-rating">Rating: {{ movieInfo.rating }}/100</div>
+        <div class="movie-rating">Rating: {{ averageScore }}/100</div>
         <p class="movie-description" style="font-size: 20px">{{ movieInfo.overview }}</p>
         <hr />
         <h2 class="review-title">Reviews:</h2>
@@ -42,8 +42,9 @@
     </div>
   </div>
 </template>
+
 <script>
-import {collection, onSnapshot, doc, getFirestore, addDoc, setDoc, updateDoc, deleteDoc} from 'firebase/firestore'
+import {collection, onSnapshot, doc, getFirestore, setDoc, updateDoc, deleteDoc} from 'firebase/firestore'
 import {getAuth} from 'firebase/auth'
 //import { assert } from '@vue/compiler-core'
 import axios from 'axios'
@@ -81,14 +82,19 @@ import axios from 'axios'
       const docRef = doc(colRef, this.movieId);
       const subColRef = collection(docRef, "reviews");
       onSnapshot(subColRef, snapShot => {
-        this.reviews = snapShot.docs //Get all other user
+        this.reviews = snapShot.docs
           .filter(doc => doc.id !== this.curUserId)
           .map(doc => doc.data());
-        const userReview = snapShot.docs //Filter out the current user
+        const userReview = snapShot.docs
           .filter(doc => doc.id === this.curUserId)
           .map(doc => doc.data())
           .shift();
-        this.curUserReview = userReview || {}; //Prevent error if current user has no review
+        this.curUserReview = userReview || {};
+        let personal_review = document.getElementById('personal-review');
+        console.log(this.curUserReview.review);
+        if(this.curUserReview.review != undefined){
+          personal_review.style.display = "block";
+        }
         // Update average score
         this.setAverageScore(snapShot.docs.map(doc => doc.data()))
       });
@@ -99,27 +105,36 @@ import axios from 'axios'
           this.deleteReview();
           return;
         }
+
         let slider = document.getElementById("scoreSlider"); //Slider for the score
         this.curUserScore = slider.value;
+
         const db = getFirestore()
         const docRef = doc(db, "movies", this.movieId);
         const subColRef = collection(docRef, "reviews");
         const subDocRef = doc(subColRef, this.curUserId);
         const dataObj = {review: this.review, userId: this.curUserId, userScore: this.curUserScore};
+
+        let personal_review = document.getElementById('personal-review');
+        personal_review.style.display = "block";
+        await setDoc(subDocRef, dataObj);
         await setDoc(subDocRef, dataObj);
       },
       async deleteReview(){
-      const db = getFirestore()
-      const docRef = doc(db, "movies", this.movieId);
-      const subColRef = collection(docRef, "reviews");
-      const subDocRef = doc(subColRef, this.curUserId);
-      await deleteDoc(subDocRef)
+        const db = getFirestore()
+        const docRef = doc(db, "movies", this.movieId);
+        const subColRef = collection(docRef, "reviews");
+        const subDocRef = doc(subColRef, this.curUserId);
+
+        let personal_review = document.getElementById('personal-review');
+        personal_review.style.display = "none";
+        await deleteDoc(subDocRef)
       },
       getPoster (){
-      if(this.movieInfo.poster_path != null){
-        return 'https://image.tmdb.org/t/p/original' + this.movieInfo.poster_path;
-      }
-      else return 'https://via.placeholder.com/500x750?text=Poster+Not+Available'
+        if(this.movieInfo.poster_path != null){
+          return 'https://image.tmdb.org/t/p/original' + this.movieInfo.poster_path;
+        }
+        else return 'https://via.placeholder.com/500x750?text=Poster+Not+Available'
       },
       async setAverageScore(userData){
         let total = 0, i = 0;
@@ -131,7 +146,7 @@ import axios from 'axios'
         const db = getFirestore()
         const docRef = doc(db, "movies", this.movieId);
         const dataObj = {averageScore: average};
-        await setDoc(docRef, dataObj); //Update average score to firebase
+        await updateDoc(docRef, dataObj); //Update average score to firebase
         this.averageScore = average; //Update acerage score in this page
       }
     }
