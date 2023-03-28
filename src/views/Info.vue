@@ -16,11 +16,14 @@
         </form>
       </div>
       <div class="review-list">
-        <ul style="margin: 0; padding: 0;">
+        <ul style="margin: 0; padding: 0;" id="personal-review">
           <li style="list-style:none">
             <div class="review-section">
-              <div class="reviewer-name">USER - {{curUserReview.userId}}</div>
+              <div class="reviewer-name">User - {{curUserId}}</div>
               <div class="review-content">{{curUserReview.review}}</div>
+              <button id="review-delete" type="submit" @click="deleteReview">
+              <div>Delete</div>
+              </button>
             </div>
           </li>
         </ul> 
@@ -54,7 +57,7 @@ import axios from 'axios'
         reviews: {},
         review: '',
         curUserReview: {},
-        curUserId: getAuth().currentUser.uid
+        curUserId: getAuth().currentUser.uid,
       }
     },
     created() {
@@ -83,6 +86,11 @@ import axios from 'axios'
           .map(doc => doc.data())
           .shift();
         this.curUserReview = userReview || {};
+        let personal_review = document.getElementById('personal-review');
+        console.log(this.curUserReview.review);
+        if(this.curUserReview.review != undefined){
+          personal_review.style.display = "block";
+        }
       });
     },
     methods: {
@@ -92,21 +100,27 @@ import axios from 'axios'
         const subColRef = collection(docRef, "reviews");
         const subDocRef = doc(subColRef, this.curUserId);
         const dataObj = {review: this.review, userId: this.curUserId};
+
+        let personal_review = document.getElementById('personal-review');
+        personal_review.style.display = "block";
         await setDoc(subDocRef, dataObj);
       },
       async deleteReview(){
-      const db = getFirestore()
-      const docRef = doc(db, "movies", this.movieId);
-      const subColRef = collection(docRef, "reviews");
-      const subDocRef = doc(subColRef, this.curUserId);
-      await deleteDoc(subDocRef)
+        const db = getFirestore()
+        const docRef = doc(db, "movies", this.movieId);
+        const subColRef = collection(docRef, "reviews");
+        const subDocRef = doc(subColRef, this.curUserId);
+
+        let personal_review = document.getElementById('personal-review');
+        personal_review.style.display = "none";
+        await deleteDoc(subDocRef)
       },
       getPoster (){
-      if(this.movieInfo.poster_path != null){
-        return 'https://image.tmdb.org/t/p/original' + this.movieInfo.poster_path;
-      }
-      else return 'https://via.placeholder.com/500x750?text=Poster+Not+Available'
-      }   
+        if(this.movieInfo.poster_path != null){
+          return 'https://image.tmdb.org/t/p/original' + this.movieInfo.poster_path;
+        }
+        else return 'https://via.placeholder.com/500x750?text=Poster+Not+Available'
+        }   
     }
   }
 </script>
@@ -145,7 +159,7 @@ import axios from 'axios'
     margin-bottom: 10px;
   }
 
-  .review-form button {
+  button {
     font-size: 15px;
     border-width: 5px;
     border-color: grey;
@@ -156,11 +170,18 @@ import axios from 'axios'
   }
 
   .reviewer-name{
+    text-decoration: underline;
     font-size: 25px;
   }
 
   .review-content{
+    max-width: 70%;
+    margin-bottom: 10px;
     font-size: 15px;
+  }
+
+  #personal-review{
+    display: none;
   }
 
 
