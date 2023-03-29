@@ -8,6 +8,7 @@ import './assets/main.css'
 
 const firebaseConfig = {
     
+ 
 };
 let app = initializeApp(firebaseConfig)
 app = createApp(App).use(router).mount('#app')
