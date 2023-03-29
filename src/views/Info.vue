@@ -66,7 +66,6 @@ import axios from 'axios'
         review: '',
         curUserReview: {},
         curUserId: getAuth().currentUser.uid,
-        curUserScore: '',
         //for slider
         showValue: false,
         ratingValue: 50, 
