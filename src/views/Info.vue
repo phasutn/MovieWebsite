@@ -27,7 +27,7 @@
         <ul style="margin: 0; padding: 0;" id="personal-review">
           <li style="list-style:none">
             <div class="review-section">
-              <div class="reviewer-name">USER - {{curUserId}}</div>
+              <div class="reviewer-name">[{{ratingValue}}/100] USER - {{curUserId}}</div>
               <div class="review-content">{{curUserReview.review}}</div>
               <button id="review-delete" type="submit" @click="deleteReview">
               <div>Delete</div>
@@ -38,7 +38,7 @@
         <ul style="margin: 0; padding: 0;">
           <li style="list-style:none" v-for="(review, key) in reviews" :key="key">
             <div class="review-section">
-              <div class="reviewer-name">USER - {{review.userId}} {{review.userScore}}</div>
+              <div class="reviewer-name">[{{review.userScore}}/100] USER - {{review.userId}} </div>
               <div class="review-content">{{review.review}}</div>
             </div>
           </li>
@@ -66,7 +66,6 @@ import axios from 'axios'
         review: '',
         curUserReview: {},
         curUserId: getAuth().currentUser.uid,
-        curUserScore: '',
         //for slider
         showValue: false,
         ratingValue: 50, 
