@@ -3,7 +3,7 @@
 
 
 <template>
-    <div class="LogInContainer">
+    <div class="container">
       <div class="loginPanel">
         <h1>SIGN IN</h1><br/>
           <div class="info">

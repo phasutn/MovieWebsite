@@ -3,6 +3,8 @@ import MovieList from '../views/MovieList.vue'
 import Info from '../views/Info.vue'
 import SignIn from '../views/SignIn.vue'
 import SignUp from '../views/SignUp.vue'
+import SignOut from '../views/SignOut.vue'
+import UnAuth from '../views/UnAuth.vue'
 
 import {getAuth, onAuthStateChanged} from 'firebase/auth'
 
@@ -43,6 +45,16 @@ const router = createRouter({
       path: '/signup',
       name: 'SignUp',
       component: SignUp
+    },
+    {
+      path: '/signout',
+      name: 'SignOut',
+      component: SignOut
+    },
+    {
+      path: '/unauth',
+      name: 'UnAuth',
+      component: UnAuth,
     }
   ]
 })
@@ -70,7 +82,7 @@ router.beforeEach(async(to, from, next)=> {
         next()
     } else {
       console.log('Unauthorized user to access the page')
-      next('signin')
+      next('unauth')
     }
   } else {
     next()
