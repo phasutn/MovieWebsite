@@ -38,7 +38,7 @@
         <ul style="margin: 0; padding: 0;">
           <li style="list-style:none" v-for="(review, key) in reviews" :key="key">
             <div class="review-section">
-              <div class="reviewer-name">USER - {{review.userId}}</div>
+              <div class="reviewer-name">USER - {{review.userId}} {{review.userScore}}</div>
               <div class="review-content">{{review.review}}</div>
             </div>
           </li>
@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import {collection, onSnapshot, doc, getFirestore, setDoc, updateDoc, deleteDoc} from 'firebase/firestore'
+import {collection, onSnapshot, doc, getFirestore, setDoc, deleteDoc} from 'firebase/firestore'
 import {getAuth} from 'firebase/auth'
 //import { assert } from '@vue/compiler-core'
 import axios from 'axios'
@@ -99,12 +99,14 @@ import axios from 'axios'
         .filter(doc => doc.id === this.curUserId)
         .map(doc => doc.data())
         .shift();
+      
       this.curUserReview = userReview || {};
       let personal_review = document.getElementById('personal-review');
       console.log(this.curUserReview.review);
       if(this.curUserReview.review != undefined){
         personal_review.style.display = "block";
       }
+
       // Update average score
       this.setAverageScore(snapShot.docs.map(doc => doc.data()))
     });
@@ -123,8 +125,7 @@ import axios from 'axios'
         return;
       }
 
-      let slider = document.getElementById("scoreSlider"); //Slider for the score
-      this.curUserScore = slider.value;
+      this.curUserScore = this.ratingValue;
 
       const db = getFirestore()
       const docRef = doc(db, "movies", this.movieId);
@@ -155,23 +156,24 @@ import axios from 'axios'
       }
       else return 'https://via.placeholder.com/500x750?text=Poster+Not+Available'
     },
-
     async setAverageScore(userData){
       let total = 0, i = 0;
       userData.forEach(user => {
-        total += user.userScore;
+        total += parseInt(user.userScore);
         i++
       });
       let average = total/i;
-
       const db = getFirestore()
       const docRef = doc(db, "movies", this.movieId);
       const dataObj = {averageScore: average};
       if(isNaN(average)){ //If average is NaN, delete the doc altogether
         await deleteDoc(docRef);
+        this.averageScore = "-";
       }
-      else await setDoc(docRef, dataObj); //Update average score to firebase
-      this.averageScore = average; //Update acerage score in this page
+      else{
+        await setDoc(docRef, dataObj); //Update average score to firebase
+        this.averageScore = average; //Update acerage score in this page
+      }
     }
   }
 }
