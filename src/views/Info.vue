@@ -27,7 +27,7 @@
         <ul style="margin: 0; padding: 0;" id="personal-review">
           <li style="list-style:none">
             <div class="review-section">
-              <div class="reviewer-name">[{{ratingValue}}/100] USER - {{curUserId}}</div>
+              <div class="reviewer-name">[{{curUserReview.userScore}}/100] USER - {{curUserId}}</div>
               <div class="review-content">{{curUserReview.review}}</div>
               <button id="review-delete" type="submit" @click="deleteReview">
               <div>Delete</div>
@@ -57,7 +57,7 @@ import axios from 'axios'
     name: 'CityList',
     data () {
       return {
-        apikey: 'e4812b0763e5a2d97cbb969c192759a7',
+        apikey: import.meta.env.VITE_movieApiKey,
         movieInfo: {},
         movieId: this.$route.params.movieid,
         moviePoster: '',
@@ -68,10 +68,9 @@ import axios from 'axios'
         curUserId: getAuth().currentUser.uid,
         //for slider
         showValue: false,
-        ratingValue: 50, 
+        ratingValue: '', 
       }
   },
-
   created() {
     let infoUrl = 'https://api.themoviedb.org/3/movie/' + this.movieId + '?api_key=' + this.apikey;
     axios.get(infoUrl)
@@ -82,8 +81,8 @@ import axios from 'axios'
     .catch((error)=>{
       console.log(error)
     })
+    this.ratingValue = 50;
   },
-
   mounted () {
     console.log('Review List');
     const db = getFirestore();
@@ -100,6 +99,10 @@ import axios from 'axios'
         .shift();
       
       this.curUserReview = userReview || {};
+      if(this.curUserReview.userScore != undefined){
+        this.ratingValue = this.curUserReview.userScore;
+      }
+
       let personal_review = document.getElementById('personal-review');
       console.log(this.curUserReview.review);
       if(this.curUserReview.review != undefined){
